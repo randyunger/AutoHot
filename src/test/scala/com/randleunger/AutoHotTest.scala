@@ -10,7 +10,11 @@ package com.randleunger
   *
   **/
 
+import java.io.{BufferedReader, InputStreamReader}
+import java.net.{HttpURLConnection, URL}
+
 import org.scalatest.FunSuite
+
 import scala.concurrent.duration._
 
 class AutoHotTest extends FunSuite {
@@ -152,4 +156,37 @@ class AutoHotTest extends FunSuite {
   }
 
   //test what happens if the same label is used multiple times
+}
+
+class AutoHotTestExample extends FunSuite {
+
+  test("example") {
+    def currentTime() = AutoHot().heat("API call", 300.millis){
+      val url = new URL("http://worldtimeapi.org/api/ip")
+      val con = url.openConnection().asInstanceOf[HttpURLConnection]
+      con.setRequestMethod("GET")
+      val in = new BufferedReader(new InputStreamReader(con.getInputStream()))
+
+      var inputLine: String = ""
+      val content = new StringBuffer()
+      def getLine(): Boolean = {
+        inputLine = in.readLine()
+        Option(inputLine).isDefined
+      }
+      while(getLine()){
+        content.append(inputLine)
+      }
+      in.close()
+      content
+    }
+
+    val (a,b,c) = (currentTime(), currentTime(), currentTime())
+    Thread.sleep(1000)
+    val (d,e,f)= (currentTime(), currentTime(), currentTime())
+
+    //Notice that the first 3 calls are all the same.
+    //Then the cache refresh occurs during the Thread.sleep
+    println((a,b,c,d,e,f).productIterator.toList.mkString("\n"))
+
+  }
 }
