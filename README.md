@@ -20,15 +20,14 @@ the call to heat.
 Due to the magic of closures, the calling context remains in scope on
 future calls 
 
-def getConfigurationFromDB(dbService: DbService) = {
-
-    dbService.oneTimeConfiguration(some, parameters)
-
-    AutoHot.heat("example", 5.minutes){
-        dbService.fetch(configurationTable)
+    def getConfigurationFromDB(dbService: DbService) = {
+    
+        dbService.oneTimeConfiguration(some, parameters)
+    
+        AutoHot.heat("example", 5.minutes){
+            dbService.fetch(configurationTable)
+        }
     }
-
-}
 
 The above example will allow you anywhere you can call getConfigurationFromDB
 to always have values that are no more than 5 minutes old. This is great
